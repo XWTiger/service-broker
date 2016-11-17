@@ -4,13 +4,15 @@ public class TaskStack {
 
 	private String id;
 	private String requestUrl;
+	private String eventType;
 	private String requestMethod;
 	private String params;
 	private String callBackUrl;
 	private String addTime;
 	private int lockTask;
-	private int farmId;
-	
+	private String farmId;
+	private int repeatTimes;
+	private String destinationFarmId;
 	
 	public int getLock() {
 		return lockTask;
@@ -18,10 +20,10 @@ public class TaskStack {
 	public void setLock(int lock) {
 		this.lockTask = lock;
 	}
-	public int getFarmId() {
+	public String getFarmId() {
 		return farmId;
 	}
-	public void setFarmId(int farmId) {
+	public void setFarmId(String farmId) {
 		this.farmId = farmId;
 	}
 	public String getAddTime() {
@@ -60,4 +62,29 @@ public class TaskStack {
 	public void setCallBackUrl(String callBackUrl) {
 		this.callBackUrl = callBackUrl;
 	}
+	public int getLockTask() {
+		return lockTask;
+	}
+	public void setLockTask(int lockTask) {
+		this.lockTask = lockTask;
+	}
+	public int getRepeatTimes() {
+		return repeatTimes;
+	}
+	public void setRepeatTimes(int repeatTimes) {
+		this.repeatTimes = repeatTimes;
+	}
+	public String getDestinationFarmId() {
+		return destinationFarmId;
+	}
+	public void setDestinationFarmId(String destinationFarmId) {
+		this.destinationFarmId = destinationFarmId;
+	}
+	public String getEventType() {
+		return eventType;
+	}
+	public void setEventType(String eventType) {
+		this.eventType = eventType;
+	}
+	
 }

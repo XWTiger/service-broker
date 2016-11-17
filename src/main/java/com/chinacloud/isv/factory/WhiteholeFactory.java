@@ -5,9 +5,6 @@ import java.io.IOException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import com.chinacloud.isv.entity.callbackparams.Data;
-import com.chinacloud.isv.util.CaseProvider;
-import com.chinacloud.isv.util.MSUtil;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -58,20 +55,5 @@ public class WhiteholeFactory {
 		return cTail;
 	}
 	
-	public static String getAsynReturnJson(String eventId,String caseName) throws JsonProcessingException{
-		String jsonObj = null;
-		Data data = new Data();
-		data.setSuccess(true);
-		com.chinacloud.isv.entity.callbackparams.Process process = new com.chinacloud.isv.entity.callbackparams.Process();
-		process.setEventId(eventId);
-		process.setStatus(CaseProvider.EVENT_TYPE_WAIT_FOR_RESULT);
-		String name = MSUtil.getChineseName(caseName);
-		if(null == name){
-			logger.warn("the case name "+caseName+" don't exist");
-		}
-		data.setMessage(name+CaseProvider.EVENT_TYPE_WAIT_FOR_RESULT_MESSAGE);
-		data.setProcess(process);
-		jsonObj = getJsonString(data);
-		return jsonObj;
-	}
+	
 }

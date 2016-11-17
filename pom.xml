@@ -2,7 +2,7 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>chinacloud.com.cn</groupId>
-  <artifactId>isv</artifactId>
+  <artifactId>pufa</artifactId>
   <packaging>jar</packaging>
   <version>0.0.1-SNAPSHOT</version>
   <name>isv Maven Webapp</name>
@@ -53,14 +53,15 @@
       <version>1.2.3</version>
       <scope>compile</scope>
     </dependency>
-    
-     <dependency>
+
+    <dependency>
       <groupId>org.apache.tomcat</groupId>
       <artifactId>tomcat-jdbc</artifactId>
     </dependency>
     <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
+      <groupId>com.oracle</groupId>
+      <artifactId>ojdbc14</artifactId>
+      <version>14</version>
     </dependency>
   </dependencies>
 

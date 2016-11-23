@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.chinacloud.isv.persistance.TaskStackDao">
+    <select id="getTasks" resultType="com.chinacloud.isv.domain.TaskStack">
+        select * from TaskStack where lockTask = 0 limit 20 
+    </select>
+    <insert id="addTask" parameterType="com.chinacloud.isv.domain.TaskStack">
+        insert into TaskStack(id,requestUrl,requestMethod,params,callBackUrl,lockTask,addTime,repeatTimes,eventType,eventId) 
+        values(#{id},#{requestUrl},#{requestMethod},#{params},#{callBackUrl},#{lockTask},now(),#{repeatTimes},#{eventType},#{eventId})
+    </insert>
+    <delete id="deleteTask" parameterType="String">
+        delete from TaskStack where id=#{id} and lockTask = 1
+    </delete>
+     
+     <update id="lockTask" parameterType="String" >
+     update TaskStack set lockTask=1 where lockTask !=1 and id=#{id}
+     </update>  
+     
+     <update id="unLockTask" parameterType="String">
+      update TaskStack set lockTask=0 where lockTask !=0 and id=#{id}
+     </update>
+       
+     <select id="getRepeatTimesById" resultType="Integer">
+        select repeatTimes from TaskStack 
+        <where>
+        id = #{id} and lockTask = 1;
+        </where>
+     </select> 
+     
+     <update id="addRepeageTimesById" >
+        update TaskStack set repeatTimes=#{repeatTimes} where id = #{id}
+     </update>
+     
+     <select id="getTasksByTime" resultType="com.chinacloud.isv.domain.TaskStack">
+        select * from TaskStack 
+        <where>
+            lockTask = 1 and TO_DAYS(now())-TO_DAYS(addTime)>#{time}
+        </where>
+     </select>
+     
+</mapper>

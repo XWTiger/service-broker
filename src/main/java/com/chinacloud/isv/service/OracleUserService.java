@@ -56,7 +56,9 @@ public class OracleUserService {
 		try {
 			statement.execute(grantPri);
 		} catch (SQLException e) {
+			logger.error("grant user privileges failed, error message:"+e.getLocalizedMessage());
 			e.printStackTrace();
+			
 			return e.getLocalizedMessage();
 		}
 		return null;
@@ -65,13 +67,14 @@ public class OracleUserService {
 	 * revoke connnect resource privileges
 	 * @param statement
 	 * @param vp
-	 * @return
+	 * @return null is success otherwise error message 
 	 */
 	public String revokePrivileges(Statement statement,ValueProvider vp){
 		String revokePri = "REVOKE CONNECT,RESOURCE FROM "+vp.getCreateUserName();
 		try {
 			statement.execute(revokePri);
 		} catch (SQLException e) {
+			logger.error("revoke user privileges failed, error message:"+e.getLocalizedMessage());
 			e.printStackTrace();
 			return e.getLocalizedMessage();
 		}

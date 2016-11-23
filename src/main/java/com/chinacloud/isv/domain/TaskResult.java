@@ -3,39 +3,61 @@ package com.chinacloud.isv.domain;
 public class TaskResult {
 
 	private String id;
-	private String cFarmId = "0";
 	private String requestMethod;
-	private String params;
+	private String toWhParams;
 	private String resultStatus;
-	private String info;
+
 	private String addTime;
 	private String requestUrl;
-	private String destinationFarmId;
 	private String envId;
 	private String eventType;
+	private String eventId;
+	private String whReturnedParams;
+	private String eventParams;
+	private String oracleConnUrl;            
+	private String oracleDBAUser;            
+	private String oracleDBAPassword;         
+	private String userName;               
+	private String userPassword;             
+	private String tableSpaceName;            
+	private String tableSpaceSize;           
+	private String tableSpaceMaxSize;        
+	private String tableSpaceRiseNumber; 
+	private String tableSpaceLocation;
+	
+	
+	
 	public String getId() {
 		return id;
 	}
 	public void setId(String id) {
 		this.id = id;
 	}
-	public String getcFarmId() {
-		return cFarmId;
-	}
-	public void setcFarmId(String cFarmId) {
-		this.cFarmId = cFarmId;
-	}
+	
 	public String getRequestMethod() {
 		return requestMethod;
 	}
 	public void setRequestMethod(String requestMethod) {
 		this.requestMethod = requestMethod;
 	}
-	public String getParams() {
-		return params;
+	
+	public String getToWhParams() {
+		return toWhParams;
 	}
-	public void setParams(String params) {
-		this.params = params;
+	public void setToWhParams(String toWhParams) {
+		this.toWhParams = toWhParams;
+	}
+	public String getWhReturnedParams() {
+		return whReturnedParams;
+	}
+	public void setWhReturnedParams(String whReturnedParams) {
+		this.whReturnedParams = whReturnedParams;
+	}
+	public String getEventParams() {
+		return eventParams;
+	}
+	public void setEventParams(String eventParams) {
+		this.eventParams = eventParams;
 	}
 	public String getResultStatus() {
 		return resultStatus;
@@ -43,12 +65,7 @@ public class TaskResult {
 	public void setResultStatus(String resultStatus) {
 		this.resultStatus = resultStatus;
 	}
-	public String getInfo() {
-		return info;
-	}
-	public void setInfo(String info) {
-		this.info = info;
-	}
+	
 	public String getRequestUrl() {
 		return requestUrl;
 	}
@@ -60,12 +77,6 @@ public class TaskResult {
 	}
 	public void setAddTime(String addTime) {
 		this.addTime = addTime;
-	}
-	public String getDestinationFarmId() {
-		return destinationFarmId;
-	}
-	public void setDestinationFarmId(String destinationFarmId) {
-		this.destinationFarmId = destinationFarmId;
 	}
 	public String getEnvId() {
 		return envId;
@@ -79,5 +90,72 @@ public class TaskResult {
 	public void setEventType(String eventType) {
 		this.eventType = eventType;
 	}
+	public String getOracleConnUrl() {
+		return oracleConnUrl;
+	}
+	public void setOracleConnUrl(String oracleConnUrl) {
+		this.oracleConnUrl = oracleConnUrl;
+	}
+	public String getOracleDBAUser() {
+		return oracleDBAUser;
+	}
+	public void setOracleDBAUser(String oracleDBAUser) {
+		this.oracleDBAUser = oracleDBAUser;
+	}
+	public String getOracleDBAPassword() {
+		return oracleDBAPassword;
+	}
+	public void setOracleDBAPassword(String oracleDBAPassword) {
+		this.oracleDBAPassword = oracleDBAPassword;
+	}
+	public String getUserName() {
+		return userName;
+	}
+	public void setUserName(String userName) {
+		this.userName = userName;
+	}
+	public String getUserPassword() {
+		return userPassword;
+	}
+	public void setUserPassword(String userPassword) {
+		this.userPassword = userPassword;
+	}
+	public String getTableSpaceName() {
+		return tableSpaceName;
+	}
+	public void setTableSpaceName(String tableSpaceName) {
+		this.tableSpaceName = tableSpaceName;
+	}
+	public String getTableSpaceSize() {
+		return tableSpaceSize;
+	}
+	public void setTableSpaceSize(String tableSpaceSize) {
+		this.tableSpaceSize = tableSpaceSize;
+	}
+	public String getTableSpaceMaxSize() {
+		return tableSpaceMaxSize;
+	}
+	public void setTableSpaceMaxSize(String tableSpaceMaxSize) {
+		this.tableSpaceMaxSize = tableSpaceMaxSize;
+	}
+	public String getTableSpaceRiseNumber() {
+		return tableSpaceRiseNumber;
+	}
+	public void setTableSpaceRiseNumber(String tableSpaceRiseNumber) {
+		this.tableSpaceRiseNumber = tableSpaceRiseNumber;
+	}
+	public String getEventId() {
+		return eventId;
+	}
+	public void setEventId(String eventId) {
+		this.eventId = eventId;
+	}
+	public String getTableSpaceLocation() {
+		return tableSpaceLocation;
+	}
+	public void setTableSpaceLocation(String tableSpaceLocation) {
+		this.tableSpaceLocation = tableSpaceLocation;
+	}
+	
 	
 }

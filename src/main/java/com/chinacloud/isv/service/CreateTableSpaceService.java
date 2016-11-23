@@ -6,9 +6,10 @@ import java.sql.Statement;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
 import com.chinacloud.isv.entity.ValueProvider;
-
+@Service
 public class CreateTableSpaceService {
 	private static final Logger logger = LogManager.getLogger(CreateTableSpaceService.class);
 	
@@ -17,6 +18,11 @@ public class CreateTableSpaceService {
 	@Autowired
 	OracleUserService oracleUserService;
 	
+	/**
+	 * 
+	 * @param vp
+	 * @return null is success otherwise it is error message
+	 */
 	public String createTableSpace(ValueProvider vp){
 		//1. make a create table space sql
 		String createTableSpace = "create tablespace"+vp.getTableSpaceName()+"datafile '"+vp.getTableSpaceLocation()+"/"+vp.getTableSpaceName()+".dbf ' size "+vp.getTableSpaceSize()+"M autoextend on next "+vp.getTableSpaceRiseNumber()+"M maxsize "+vp.getTableSpaceMaxSize()+"M";
@@ -50,7 +56,34 @@ public class CreateTableSpaceService {
 		if(null != grantPriRes){
 			return grantPriRes;
 		}
-		
+		if(null != statement){
+			try {
+				statement.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		oracleDriverService.close();
+		return null;
+	}
+	
+	public String dropTableSpace(ValueProvider vp){
+		String dropTableSpace = "DROP TABLESPACE "+vp.getTableSpaceName();
+		Statement statement = oracleDriverService.getStatement(vp.getOracleConnectionUrl(), vp.getUserName(), vp.getPassword());
+		try {
+			statement.execute(dropTableSpace);
+		} catch (SQLException e) {
+			e.printStackTrace();
+			logger.error("drop table space  "+vp.getTableSpaceName()+" failed, error message:"+e.getLocalizedMessage());
+			return e.getLocalizedMessage();
+		}
+		if(null != statement){
+			try {
+				statement.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
 		oracleDriverService.close();
 		return null;
 	}

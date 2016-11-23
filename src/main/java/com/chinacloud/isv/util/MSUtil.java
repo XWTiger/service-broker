@@ -1,12 +1,8 @@
 package com.chinacloud.isv.util;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.apache.http.NameValuePair;
 import org.apache.http.client.config.RequestConfig;
@@ -24,8 +20,7 @@ import org.apache.logging.log4j.Logger;
 
 import com.chinacloud.isv.domain.TaskResult;
 import com.chinacloud.isv.domain.TaskStack;
-import com.chinacloud.isv.factory.WhiteholeFactory;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.chinacloud.isv.entity.ValueProvider;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -154,33 +149,32 @@ public class MSUtil {
 	 * @param task
 	 * @return
 	 */
-	public static TaskResult getTaskResult(int type, TaskStack task, String r, String comebackResult,String clonedFarmId,String caseType,String envId,String eventType) {
+	public static TaskResult getTaskResult(int type, TaskStack task, String r, String comebackResult,String caseType,String eventId) {
 		TaskResult result = new TaskResult();
 		if (1 == type) {
 			result.setResultStatus("SUCCESS");
 			result.setId(task.getId());
 			result.setRequestMethod(task.getRequestMethod());
-			result.setParams(r);
-			result.setInfo(comebackResult);
+			result.setEventParams(r);
+			result.setWhReturnedParams(comebackResult);
 			result.setRequestUrl(task.getCallBackUrl());
-			result.setEnvId(envId);
-			result.setEventType(eventType);
+			result.setEventId(eventId);
+			result.setEventType(MSUtil.getChineseName(caseType));
 			if(caseType.equals(CaseProvider.EVENT_TYPE_SUBSCRIPTION_ORDER)){
-				result.setcFarmId(clonedFarmId);
-				result.setDestinationFarmId(task.getFarmId());
+				//result.setcFarmId(clonedFarmId);
+				//result.setDestinationFarmId(task.getFarmId());
 			}else{
-				result.setDestinationFarmId(clonedFarmId);
+				//result.setDestinationFarmId(clonedFarmId);
 			}
 		} else {
 			result.setResultStatus(CaseProvider.FAILED_STATUS);
 			result.setId(task.getId());
 			result.setRequestMethod(task.getRequestMethod());
-			result.setParams(r);
+			result.setEventParams(r);
 			result.setRequestUrl(task.getCallBackUrl());
-			result.setDestinationFarmId(clonedFarmId);
-			result.setEnvId(envId);
-			result.setEventType(eventType);
-			result.setInfo("call back return result failed,farm id:"+clonedFarmId +", errorMsg:"+ comebackResult);
+			result.setEventId(eventId);
+			result.setEventType(MSUtil.getChineseName(caseType));
+			result.setWhReturnedParams("call back return result to whitehole failed, errorMsg:"+ comebackResult);
 		}
 		return result;
 	}
@@ -343,20 +337,46 @@ public class MSUtil {
 	 * type not 0 success, 0 filed
 	 * @return
 	 */
-	public static TaskResult getResultInstance(String id,String status,String requestMthod,String requestResponse,String cFarmId,String callBackUrl,String parameters,String destinationFarmId,String eventType){
+	public static TaskResult getResultInstance(String id,String status,String requestMthod,String requestResponse,String callBackUrl,String parameters,String eventType){
 		TaskResult tResult = new TaskResult();
 		tResult.setResultStatus(status);
 		tResult.setId(id);
 		tResult.setRequestMethod(requestMthod);
-		tResult.setParams(parameters);
-		tResult.setInfo(requestResponse);
-		tResult.setcFarmId(cFarmId);
+		tResult.setEventParams(parameters);
+		tResult.setWhReturnedParams(requestResponse);
 		tResult.setEventType(eventType);
-		logger.debug("===========cFarmId=======>"+cFarmId+"===destinationFarmId==>"+destinationFarmId);
-		tResult.setDestinationFarmId(destinationFarmId);
+		//logger.debug("===========cFarmId=======>"+cFarmId+"===destinationFarmId==>"+destinationFarmId);
+		
 		tResult.setRequestUrl(callBackUrl);
 		return tResult;
 	}
 	
+	/**
+	 * get result instance 
+	 * 
+	 * @return
+	 */
+	public static TaskResult getResultInstance(String status,ValueProvider valueProvider,String whiteholeResultInfo){
+		TaskResult tResult = new TaskResult();
+		tResult.setResultStatus(status);
+		tResult.setId(valueProvider.getInstanceId());
+		tResult.setRequestMethod(valueProvider.getRequsetMethod());
+		tResult.setEventParams(valueProvider.getEventParams());
+		tResult.setWhReturnedParams(whiteholeResultInfo);
+		tResult.setToWhParams(valueProvider.getToWhiteholeMessage());
+		tResult.setEventId(valueProvider.getEventId());
+		tResult.setEventType(valueProvider.getEventType());
+		tResult.setOracleConnUrl(valueProvider.getOracleConnectionUrl());
+		tResult.setOracleDBAPassword(valueProvider.getPassword());
+		tResult.setUserName(valueProvider.getCreateUserName());
+		tResult.setUserPassword(valueProvider.getCreateUserPassword());
+		tResult.setTableSpaceMaxSize(String.valueOf(valueProvider.getTableSpaceMaxSize()));
+		tResult.setTableSpaceName(valueProvider.getTableSpaceName());
+		tResult.setTableSpaceRiseNumber(String.valueOf(valueProvider.getTableSpaceRiseNumber()));
+		tResult.setTableSpaceSize(String.valueOf(valueProvider.getTableSpaceSize()));
+		tResult.setTableSpaceLocation(valueProvider.getTableSpaceLocation());
+		tResult.setRequestUrl(valueProvider.getCallBackUrl());
+		return tResult;
+	}
 	
 }

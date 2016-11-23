@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import com.chinacloud.isv.domain.TaskResult;
 import com.chinacloud.isv.domain.TaskStack;
+import com.chinacloud.isv.entity.Params;
 import com.chinacloud.isv.factory.WhiteholeFactory;
 import com.chinacloud.isv.persistance.TaskResultDao;
 import com.chinacloud.isv.persistance.TaskStackDao;
@@ -31,6 +32,9 @@ public class MirRequestService {
 	
 	@Autowired
 	private TaskStackDao riskStackDao;
+	
+	@Autowired 
+	AnalyzerService analyzerService;
 	
 	@Autowired
 	private TaskResultDao taskResultDao;
@@ -72,7 +76,7 @@ public class MirRequestService {
 			logger.info("response entity content--->"+sb.toString());
 			WhiteholeFactory wf = new WhiteholeFactory();
 			boolean isSyn = false;
-		
+			Params params = wf.getEntity(Params.class,sb.toString());
 			logger.info("isSyn=====>"+isSyn);
 			if(isSyn){
 				//syn this is case query
@@ -85,26 +89,22 @@ public class MirRequestService {
 				//not syn
 				String uuid = UUID.randomUUID().toString();
 				TaskStack riskStack = new TaskStack();
-				//riskStack.setCallBackUrl(params.getData().getCallBackUrl());
+				riskStack.setCallBackUrl(params.getData().getCallBackUrl());
 				riskStack.setId(uuid);
 				riskStack.setParams(sb.toString());
-				String farmId = "0";
-				/*if(params.getData().getType().equals(CaseProvider.EVENT_TYPE_SUBSCRIPTION_ORDER)){
-					logger.debug("service tempalte Json:"+params.getData().getPayload().getOrder().getEditionCode());
-					MirTemplate mTemplate = wf.getEntity(MirTemplate.class, params.getData().getPayload().getOrder().getEditionCode());
-					farmId = mTemplate.getFarmId();
+				riskStack.setEventId(params.getData().getEventId());
+				if(params.getData().getType().equals(CaseProvider.EVENT_TYPE_SUBSCRIPTION_ORDER)){
+					logger.debug("edition code Json:"+params.getData().getPayload().getOrder().getEditionCode());
 				}else{
 					//add destination farm id
 					String instanceId = params.getData().getPayload().getInstance().getInstanceId();
 					logger.debug("when add task to stack, the instance id---->"+instanceId);
 					TaskResult tr = taskResultDao.getOrderTaskResultById(instanceId);
 					if(null == tr){
-						logger.error("get clone farm id failed because of database return null");
-					}else{
-						riskStack.setDestinationFarmId(tr.getcFarmId());
+						logger.error("get ordered instance failed because of database return null");
+						return WhiteholeFactory.getFailedMsg(params, "查询实例Id 失败", params.getData().getType());
 					}
-				}*/
-				/*riskStack.setFarmId(farmId);
+				}
 				riskStack.setLock(0);
 				//it is useful to add a analyzation method to decide witch request method to use
 				riskStack.setRequestMethod("post");
@@ -115,8 +115,8 @@ public class MirRequestService {
 				riskStackDao.addTask(riskStack);
 				// return result json
 				System.out.println("envent type---------"+params.getData().getType()+"--------");
-				message = WhiteholeFactory.getAsynReturnJson(params.getData().getEventId(), params.getData().getType(),uuid);
-				*/
+				message = WhiteholeFactory.getAsynReturnJson(params.getData().getEventId(), params.getData().getType());
+				
 			}
 			//distinguish case
 			

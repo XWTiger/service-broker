@@ -2,6 +2,7 @@ package com.chinacloud.isv.entity;
 
 public class ValueProvider {
 
+	//oracle info
 	private String oracleConnectionUrl;
 	private String userName;
 	private String password;
@@ -12,6 +13,25 @@ public class ValueProvider {
 	private int tableSpaceMaxSize;
 	private String createUserName;
 	private String createUserPassword;
+	
+	//about white hole
+	private String toWhiteholeMessage;
+	private String callBackUrl;
+	private String whiteholeReturnedMessage;
+	private String requsetMethod = "post";
+	
+	//about event info
+	private String eventParams;
+	private String eventId;
+	private String eventType;
+	private String eventDealResult;
+	
+	
+	//about instance info
+	private String instanceId;
+	
+	
+	
 	
 	
 	public String getOracleConnectionUrl() {
@@ -74,6 +94,62 @@ public class ValueProvider {
 	public void setCreateUserPassword(String createUserPassword) {
 		this.createUserPassword = createUserPassword;
 	}
+	
+	public String getToWhiteholeMessage() {
+		return toWhiteholeMessage;
+	}
+	public void setToWhiteholeMessage(String toWhiteholeMessage) {
+		this.toWhiteholeMessage = toWhiteholeMessage;
+	}
+	public String getEventParams() {
+		return eventParams;
+	}
+	public void setEventParams(String eventParams) {
+		this.eventParams = eventParams;
+	}
+	public String getEventId() {
+		return eventId;
+	}
+	public void setEventId(String eventId) {
+		this.eventId = eventId;
+	}
+	public String getInstanceId() {
+		return instanceId;
+	}
+	public void setInstanceId(String instanceId) {
+		this.instanceId = instanceId;
+	}
+	public String getCallBackUrl() {
+		return callBackUrl;
+	}
+	public void setCallBackUrl(String callBackUrl) {
+		this.callBackUrl = callBackUrl;
+	}
+	public String getEventType() {
+		return eventType;
+	}
+	public void setEventType(String eventType) {
+		this.eventType = eventType;
+	}
+	public String getWhiteholeReturnedMessage() {
+		return whiteholeReturnedMessage;
+	}
+	public void setWhiteholeReturnedMessage(String whiteholeReturnedMessage) {
+		this.whiteholeReturnedMessage = whiteholeReturnedMessage;
+	}
+	public String getRequsetMethod() {
+		return requsetMethod;
+	}
+	public void setRequsetMethod(String requsetMethod) {
+		this.requsetMethod = requsetMethod;
+	}
+	public String getEventDealResult() {
+		return eventDealResult;
+	}
+	public void setEventDealResult(String eventDealResult) {
+		this.eventDealResult = eventDealResult;
+	}
+	
 	
 	
 }

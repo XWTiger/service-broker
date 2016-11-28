@@ -28,6 +28,7 @@ public class ValueProvider {
 	
 	
 	//about instance info
+	private String taskId;
 	private String instanceId;
 	
 	
@@ -148,6 +149,12 @@ public class ValueProvider {
 	}
 	public void setEventDealResult(String eventDealResult) {
 		this.eventDealResult = eventDealResult;
+	}
+	public String getTaskId() {
+		return taskId;
+	}
+	public void setTaskId(String taskId) {
+		this.taskId = taskId;
 	}
 	
 	

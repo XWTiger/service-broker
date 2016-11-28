@@ -2,15 +2,11 @@ package com.chinacloud.isv.schedule;
 
 import java.util.ArrayList;
 
-import javax.annotation.Resource;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.chinacloud.isv.component.ActiveEvent;
 import com.chinacloud.isv.component.CancelEvent;
@@ -29,7 +25,6 @@ import com.chinacloud.isv.util.CaseProvider;
 import com.chinacloud.isv.util.MSUtil;
 
 @Component
-@Transactional
 public class TaskConsumeSchedule {
 	private static final Logger logger = LogManager.getLogger(TaskConsumeSchedule.class);
 	@Autowired
@@ -62,6 +57,7 @@ public class TaskConsumeSchedule {
 		
 			//lock
 			Integer status = riskStackDao.lockTask(taskStack.getId());
+			logger.debug("task id ===============>"+taskStack.getId());
 			if(null != status && 1 == status ){
 				//consume
 				try {
@@ -74,15 +70,18 @@ public class TaskConsumeSchedule {
 						case CaseProvider.EVENT_TYPE_SUBSCRIPTION_ORDER:{
 							String editionCode = params.getData().getPayload().getOrder().getEditionCode();
 							//analyze the edition code
+							valueProvider.setTaskId(taskStack.getId());
+							valueProvider.setInstanceId(taskStack.getId());
 							analyzerService.getOrclValueByEditonCode(editionCode, valueProvider);
-							/*orderEvent.go(valueProvider);*/
+							orderEvent.go(valueProvider);
 							valueProvider = null;
 							break;
 						}
 						case CaseProvider.EVENT_TYPE_SUBSCRIPTION_CANCEL:{
 							String instanceId = params.getData().getPayload().getInstance().getInstanceId();
 							logger.debug("CANCEL　CASE: the instance id---->"+instanceId);
-							valueProvider.setInstanceId(taskStack.getId());
+							valueProvider.setInstanceId(instanceId);
+							valueProvider.setTaskId(taskStack.getId());
 							TaskResult tr = taskResultDao.getOrderTaskResultById(instanceId);
 							if(null == tr || tr.getResultStatus().equals(CaseProvider.FAILED_STATUS)){
 								logger.error("when do cancle case,get instance order result failed because of database return null");
@@ -95,6 +94,7 @@ public class TaskConsumeSchedule {
 									taskResultDao.addResult(taskResult);
 								}
 							}
+							analyzerService.getOrclValueByTaskResult(valueProvider, tr);
 							cancelEvent.go(valueProvider);
 							valueProvider = null;
 							break;
@@ -102,7 +102,8 @@ public class TaskConsumeSchedule {
 						case CaseProvider.EVENT_TYPE_SUBSCRIPTION_SUSPEND:{
 							String instanceId = params.getData().getPayload().getInstance().getInstanceId();
 							logger.debug("SUSPEND　CASE: the instance id---->"+instanceId);
-							valueProvider.setInstanceId(taskStack.getId());
+							valueProvider.setInstanceId(instanceId);
+							valueProvider.setTaskId(taskStack.getId());
 							TaskResult tr = taskResultDao.getOrderTaskResultById(instanceId);
 							if(null == tr || tr.getResultStatus().equals(CaseProvider.FAILED_STATUS)){
 								logger.error("when do cancle case,get instance order result failed or order event not success.");
@@ -115,7 +116,7 @@ public class TaskConsumeSchedule {
 									taskResultDao.addResult(taskResult);
 								}
 							}
-							analyzerService.getOrclValueByTaskResult(valueProvider, taskResult);
+							analyzerService.getOrclValueByTaskResult(valueProvider, tr);
 							suspendEvent.go(valueProvider);
 							suspendEvent.close();
 							valueProvider = null;
@@ -126,7 +127,8 @@ public class TaskConsumeSchedule {
 						}
 						case CaseProvider.EVENT_TYPE_SUBSCRIPTION_ACTIVE:{
 							String instanceId = params.getData().getPayload().getInstance().getInstanceId();
-							valueProvider.setInstanceId(taskStack.getId());
+							valueProvider.setInstanceId(instanceId);
+							valueProvider.setTaskId(taskStack.getId());
 							logger.debug("ACTIVE VITRUAL MACHINE　CASE: the instance id---->"+instanceId);
 							TaskResult tr = taskResultDao.getOrderTaskResultById(instanceId);
 							if(null == tr || tr.getResultStatus().equals(CaseProvider.FAILED_STATUS)){
@@ -140,6 +142,7 @@ public class TaskConsumeSchedule {
 									taskResultDao.addResult(taskResult);
 								}
 							}
+							analyzerService.getOrclValueByTaskResult(valueProvider, tr);
 							activeEvent.go(valueProvider);
 							activeEvent.close();
 							valueProvider = null;

@@ -26,7 +26,9 @@ public class OracleUserService {
 		try {
 			ResultSet rs = statement.executeQuery("select username,account_status from dba_users where username='"
 					+ vp.getCreateUserName().toUpperCase() + "'");
-			if(0 == rs.getRow()){
+			if(rs.next()){
+				logger.debug("user row =========>"+rs.getRow());
+			}else{
 				// 3. create user and grant privileges
 				String createUser = "create user " + vp.getCreateUserName() + " identified by " + vp.getCreateUserPassword();
 				try {
@@ -37,7 +39,6 @@ public class OracleUserService {
 					return e.getLocalizedMessage();
 				}
 			}
-			
 		} catch (SQLException e1) {
 			e1.printStackTrace();
 			logger.error("query table dba_users failed, error message:" + e1.getLocalizedMessage());

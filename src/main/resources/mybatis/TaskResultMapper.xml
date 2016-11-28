@@ -3,9 +3,9 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.chinacloud.isv.persistance.TaskResultDao">
     <insert id="addResult">
-    insert into TaskResult(id,requestMethod,eventParams,whReturnedParams,resultStatus,info,addTime,requestUrl,eventType,eventId,toWhParams,oracleConnUrl,
+    insert into TaskResult(id,requestMethod,eventParams,whReturnedParams,resultStatus,addTime,requestUrl,eventType,eventId,toWhParams,oracleConnUrl,
     oracleDBAUser,oracleDBAPassword,userName,userPassword,tableSpaceName,tableSpaceSize,tableSpaceMaxSize,tableSpaceRiseNumber,tableSpaceLocation)
-    values(#{id},#{requestMethod},#{eventParams},#{whReturnedParams},#{resultStatus},#{info},now(),#{requestUrl},#{eventType},#{eventId},#{toWhParams},{oracleConnUrl},
+    values(#{id},#{requestMethod},#{eventParams},#{whReturnedParams},#{resultStatus},now(),#{requestUrl},#{eventType},#{eventId},#{toWhParams},#{oracleConnUrl},
     #{oracleDBAUser},#{oracleDBAPassword},#{userName},#{userPassword},#{tableSpaceName},#{tableSpaceSize},#{tableSpaceMaxSize},#{tableSpaceRiseNumber},#{tableSpaceLocation})
     </insert>
     

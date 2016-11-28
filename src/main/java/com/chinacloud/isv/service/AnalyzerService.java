@@ -17,7 +17,16 @@ public class AnalyzerService {
 	 * @param params
 	 */
 	public void getOrclValueByEditonCode(String edtionCode,ValueProvider valueProvider){
-		
+		valueProvider.setOracleConnectionUrl("jdbc:oracle:thin:@172.16.64.247:1521:orcl");
+		valueProvider.setCreateUserName("XTiger");
+		valueProvider.setCreateUserPassword("123456");
+		valueProvider.setTableSpaceLocation("/home/oracle/app/oradata/orcl");
+		valueProvider.setTableSpaceName("xtiger");
+		valueProvider.setTableSpaceSize(10);
+		valueProvider.setTableSpaceRiseNumber(5);
+		valueProvider.setTableSpaceMaxSize(200);
+		valueProvider.setUserName("system");
+		valueProvider.setPassword("system123");
 	}
 	/**
 	 * event id, instance id ,call back url,event type

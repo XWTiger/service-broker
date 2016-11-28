@@ -359,7 +359,7 @@ public class MSUtil {
 	public static TaskResult getResultInstance(String status,ValueProvider valueProvider,String whiteholeResultInfo){
 		TaskResult tResult = new TaskResult();
 		tResult.setResultStatus(status);
-		tResult.setId(valueProvider.getInstanceId());
+		tResult.setId(valueProvider.getTaskId());
 		tResult.setRequestMethod(valueProvider.getRequsetMethod());
 		tResult.setEventParams(valueProvider.getEventParams());
 		tResult.setWhReturnedParams(whiteholeResultInfo);
@@ -367,6 +367,7 @@ public class MSUtil {
 		tResult.setEventId(valueProvider.getEventId());
 		tResult.setEventType(valueProvider.getEventType());
 		tResult.setOracleConnUrl(valueProvider.getOracleConnectionUrl());
+		tResult.setOracleDBAUser(valueProvider.getUserName());
 		tResult.setOracleDBAPassword(valueProvider.getPassword());
 		tResult.setUserName(valueProvider.getCreateUserName());
 		tResult.setUserPassword(valueProvider.getCreateUserPassword());

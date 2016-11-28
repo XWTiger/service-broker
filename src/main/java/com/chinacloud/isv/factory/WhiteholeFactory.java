@@ -62,11 +62,15 @@ public class WhiteholeFactory {
 		com.chinacloud.isv.entity.callbackparams.Process process = new com.chinacloud.isv.entity.callbackparams.Process();
 		process.setEventId(eventId);
 		process.setStatus(CaseProvider.EVENT_TYPE_WAIT_FOR_RESULT);
+		data.setErrorCode("");
 		String name = MSUtil.getChineseName(caseName);
 		if(null == name){
 			logger.warn("the case name "+caseName+" don't exist");
 		}
 		data.setMessage(name+CaseProvider.EVENT_TYPE_WAIT_FOR_RESULT_MESSAGE);
+		HashMap<String, Object> metadata = new HashMap<>();
+		metadata.put("type", "Oracle");
+		process.setMetadata(metadata);
 		data.setProcess(process);
 		HashMap<String, Object> att_map = new HashMap<>();
 		process.setInstance(att_map);
@@ -90,7 +94,6 @@ public class WhiteholeFactory {
 		data.setMessage(MSUtil.getChineseName(valueProvider.getEventType())+msgTail);
 		process.setEventId(valueProvider.getEventId());
 		logger.debug("the case===>"+valueProvider.getEventType());
-		if(!valueProvider.getEventType().equals(CaseProvider.EVENT_TYPE_SUBSCRIPTION_ORDER))
 		process.setInstanceId(valueProvider.getInstanceId());
 		process.setStatus(CaseProvider.FAILED_STATUS);
 		data.setProcess(process);
@@ -156,6 +159,10 @@ public class WhiteholeFactory {
 			instance.put("ORCL用户名", valueProvider.getCreateUserName());
 			instance.put("ORCL密码", valueProvider.getCreateUserPassword());
 		}
+		data.setErrorCode("");
+		data.setSuccess(true);
+		data.setMessage(MSUtil.getChineseName(valueProvider.getEventType())+"处理成功。");
+		process.setInstanceId(valueProvider.getInstanceId());
 		process.setEventId(valueProvider.getEventId());
 		process.setStatus(valueProvider.getEventDealResult());
 		process.setInstance(instance);

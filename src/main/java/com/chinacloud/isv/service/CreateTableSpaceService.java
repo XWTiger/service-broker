@@ -1,5 +1,6 @@
 package com.chinacloud.isv.service;
 
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
@@ -24,11 +25,35 @@ public class CreateTableSpaceService {
 	 * @return null is success otherwise it is error message
 	 */
 	public String createTableSpace(ValueProvider vp){
+		 
 		//1. make a create table space sql
-		String createTableSpace = "create tablespace"+vp.getTableSpaceName()+"datafile '"+vp.getTableSpaceLocation()+"/"+vp.getTableSpaceName()+".dbf ' size "+vp.getTableSpaceSize()+"M autoextend on next "+vp.getTableSpaceRiseNumber()+"M maxsize "+vp.getTableSpaceMaxSize()+"M";
+		String createTableSpace = "create tablespace "+vp.getTableSpaceName()+" datafile '"+vp.getTableSpaceLocation()+"/"+vp.getTableSpaceName()+".dbf ' size "+vp.getTableSpaceSize()+"M autoextend on next "+vp.getTableSpaceRiseNumber()+"M maxsize "+vp.getTableSpaceMaxSize()+"M";
+		logger.debug("create table space SQL====>"+createTableSpace);
 		Statement statement = oracleDriverService.getStatement(vp.getOracleConnectionUrl(), vp.getUserName(),vp.getPassword());
+		if(null == statement){
+			return "connect oracle failed";
+		}
+		
+		//2. query the table space is already exist
+		String queryTableSpace = "select tablespace_name, file_id,file_name from dba_data_files where tablespace_name='"+vp.getTableSpaceName().toUpperCase()+"'  order by tablespace_name";
+		logger.debug("query table space SQL=====> "+queryTableSpace);
+		try {
+			ResultSet rs = statement.executeQuery(queryTableSpace);
+			if(rs.next()){
+				logger.debug(rs.getString("tablespace_name"));
+			}
+			logger.debug("the  row ============>"+rs.getRow());
+			if(rs.getRow() > 0){
+				return "the table space name is already exist";
+			}
+		} catch (SQLException e) {
+			logger.error("query table space failed, error message:"+e.getLocalizedMessage());
+			e.printStackTrace();
+			return "when query table space failed, error message: "+e.getLocalizedMessage();
+		}
 		try {
 			statement.execute(createTableSpace);
+			logger.info("=============== finished create table space ================");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			logger.error("creat table space failed, error message:"+e.getLocalizedMessage());
@@ -40,6 +65,7 @@ public class CreateTableSpaceService {
 		if(null != createUserResult){
 			return createUserResult;
 		}
+		logger.info("=============== finished create user ================");
 		
 		//3. give a table space to user
 		String userTableSpace = "alter user "+vp.getCreateUserName()+" default tablespace "+vp.getTableSpaceName();
@@ -56,6 +82,7 @@ public class CreateTableSpaceService {
 		if(null != grantPriRes){
 			return grantPriRes;
 		}
+		logger.info("=============== finished grant user ================");
 		if(null != statement){
 			try {
 				statement.close();
@@ -68,10 +95,11 @@ public class CreateTableSpaceService {
 	}
 	
 	public String dropTableSpace(ValueProvider vp){
-		String dropTableSpace = "DROP TABLESPACE "+vp.getTableSpaceName();
+		String dropTableSpace = "DROP TABLESPACE "+vp.getTableSpaceName()+" including contents and datafiles";
 		Statement statement = oracleDriverService.getStatement(vp.getOracleConnectionUrl(), vp.getUserName(), vp.getPassword());
 		try {
 			statement.execute(dropTableSpace);
+			logger.info("=============== finished drop table space ================");
 		} catch (SQLException e) {
 			e.printStackTrace();
 			logger.error("drop table space  "+vp.getTableSpaceName()+" failed, error message:"+e.getLocalizedMessage());

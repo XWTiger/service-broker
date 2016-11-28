@@ -57,7 +57,7 @@ public class ActiveEvent {
 		}
 		valueProvider.setToWhiteholeMessage(whiteholeMsg);
 		String wResult = callbackWhiteholeService.returnMsgToWhitehole(whiteholeMsg, valueProvider);
-		valueProvider.setWhiteholeReturnedMessage(wResult);
+		
 		// create task result put it to data base
 		TaskResult taskResult = null;
 		if(null != wResult){// http request whitehole failed

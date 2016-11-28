@@ -14,7 +14,7 @@
     </delete>
      
      <update id="lockTask" parameterType="String" >
-     update TaskStack set lockTask=1 where lockTask !=1 and id=#{id}
+     update TaskStack set lockTask=1 where lockTask = 0 and id = #{id}
      </update>  
      
      <update id="unLockTask" parameterType="String">

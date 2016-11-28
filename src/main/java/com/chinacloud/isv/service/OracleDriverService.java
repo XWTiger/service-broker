@@ -20,6 +20,7 @@ public class OracleDriverService {
 			stmt = conn.createStatement();
 		} catch (Exception e) {
 			logger.error("connect oracle failed, error msg =====>"+e.getLocalizedMessage());
+			e.printStackTrace();
 			return null;
 		}
 		return stmt;

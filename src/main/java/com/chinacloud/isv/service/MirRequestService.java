@@ -17,9 +17,11 @@ import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.chinacloud.isv.component.EventDriver;
 import com.chinacloud.isv.domain.TaskResult;
 import com.chinacloud.isv.domain.TaskStack;
 import com.chinacloud.isv.entity.Params;
+import com.chinacloud.isv.entity.ValueProvider;
 import com.chinacloud.isv.factory.WhiteholeFactory;
 import com.chinacloud.isv.persistance.TaskResultDao;
 import com.chinacloud.isv.persistance.TaskStackDao;
@@ -38,6 +40,12 @@ public class MirRequestService {
 	
 	@Autowired
 	private TaskResultDao taskResultDao;
+	
+	@Autowired
+	EventDriver queryEvent;
+	
+	@Autowired
+	CallbackWhiteholeService callbackWhiteholeService;
 	
 	public String  sendRequest(String url){
 		String message = null;
@@ -77,12 +85,39 @@ public class MirRequestService {
 			WhiteholeFactory wf = new WhiteholeFactory();
 			boolean isSyn = false;
 			Params params = wf.getEntity(Params.class,sb.toString());
+			isSyn = MSUtil.isSynchronzation(params.getData().getType());
 			logger.info("isSyn=====>"+isSyn);
 			if(isSyn){
 				//syn this is case query
+				ValueProvider valueProvider = new ValueProvider();
+				TaskStack taskStack = new TaskStack();
 				logger.info("--------- syn-----------");
-				
-				
+				String instanceId = params.getData().getPayload().getInstance().getInstanceId();
+				logger.debug("CANCEL　CASE: the instance id---->"+instanceId);
+				valueProvider.setInstanceId(instanceId);
+				String taskId = UUID.randomUUID().toString();
+				valueProvider.setTaskId(taskId);
+				taskStack.setEventType(MSUtil.getChineseName(params.getData().getType()));
+				valueProvider.setEventType(params.getData().getType());
+				valueProvider.setEventId(params.getData().getEventId());
+				TaskResult tr = taskResultDao.getOrderTaskResultById(instanceId);
+				if(null == tr || tr.getResultStatus().equals(CaseProvider.FAILED_STATUS)){
+					logger.error("when do cancle case,get instance order result failed because of database return null");
+					String  Response = WhiteholeFactory.getFailedMsg(params, "处理失败,原因是该实例申请事件并未执行成功。", CaseProvider.EVENT_TYPE_SUBSCRIPTION_CANCEL);
+					logger.info("cancle case,get instanceid is null or order envent not success,call back return result:"+Response);
+					String whiteholeResult = callbackWhiteholeService.returnMsgToWhitehole(Response, valueProvider);
+					TaskResult taskResult = null;
+					taskStack.setId(taskId);
+					taskStack.setCallBackUrl(params.getData().getCallBackUrl());
+					taskStack.setRequestMethod("post");
+					if(null != whiteholeResult){
+						taskResult = MSUtil.getTaskResult(0, taskStack, taskStack.getParams(), valueProvider.getWhiteholeReturnedMessage(),CaseProvider.EVENT_TYPE_SUBSCRIPTION_QUERY,params.getData().getEventId());
+						taskResultDao.addResult(taskResult);
+					}
+				}
+				analyzerService.getOrclValueByTaskResult(valueProvider, tr);
+				message = queryEvent.go(valueProvider);
+				valueProvider = null;
 				logger.info("------------------------");
 				
 			}else{

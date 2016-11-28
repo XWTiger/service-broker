@@ -155,7 +155,8 @@ public class WhiteholeFactory {
 		metadata.put("type", "Oracle");
 		process.setMetadata(metadata);
 		HashMap<String, Object> instance = new HashMap<>();
-		if(valueProvider.getEventType().equals(CaseProvider.EVENT_TYPE_SUBSCRIPTION_ORDER)){
+		if(valueProvider.getEventType().equals(CaseProvider.EVENT_TYPE_SUBSCRIPTION_ORDER)||
+				valueProvider.getEventType().equals(CaseProvider.EVENT_TYPE_SUBSCRIPTION_QUERY)){
 			instance.put("ORCL用户名", valueProvider.getCreateUserName());
 			instance.put("ORCL密码", valueProvider.getCreateUserPassword());
 		}

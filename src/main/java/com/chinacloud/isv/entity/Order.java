@@ -2,13 +2,16 @@ package com.chinacloud.isv.entity;
 
 public class Order {
 
-	private String editionCode;
+	private Object editionCode;
 
-	public String getEditionCode() {
+	public Object getEditionCode() {
 		return editionCode;
 	}
-	public void setEditionCode(String editionCode) {
+
+	public void setEditionCode(Object editionCode) {
 		this.editionCode = editionCode;
 	}
+
+	
 
 }

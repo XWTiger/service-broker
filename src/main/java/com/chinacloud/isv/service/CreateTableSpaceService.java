@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.chinacloud.isv.entity.ValueProvider;
+import com.chinacloud.isv.util.MSUtil;
 @Service
 public class CreateTableSpaceService {
 	private static final Logger logger = LogManager.getLogger(CreateTableSpaceService.class);
@@ -27,7 +28,13 @@ public class CreateTableSpaceService {
 	public String createTableSpace(ValueProvider vp){
 		 
 		//1. make a create table space sql
-		String createTableSpace = "create tablespace "+vp.getTableSpaceName()+" datafile '"+vp.getTableSpaceLocation()+"/"+vp.getTableSpaceName()+".dbf ' size "+vp.getTableSpaceSize()+"M autoextend on next "+vp.getTableSpaceRiseNumber()+"M maxsize "+vp.getTableSpaceMaxSize()+"M";
+		String createTableSpace = null;
+		if(MSUtil.tailHaveDirectedSymbol(vp.getTableSpaceLocation(), "/")){
+			createTableSpace = "create tablespace "+vp.getTableSpaceName()+" datafile '"+vp.getTableSpaceLocation()+vp.getTableSpaceName()+".dbf ' size "+vp.getTableSpaceSize()+"M autoextend on next "+vp.getTableSpaceRiseNumber()+"M maxsize "+vp.getTableSpaceMaxSize()+"M";
+		}
+		else{
+			createTableSpace = "create tablespace "+vp.getTableSpaceName()+" datafile '"+vp.getTableSpaceLocation()+"/"+vp.getTableSpaceName()+".dbf ' size "+vp.getTableSpaceSize()+"M autoextend on next "+vp.getTableSpaceRiseNumber()+"M maxsize "+vp.getTableSpaceMaxSize()+"M";
+		}
 		logger.debug("create table space SQL====>"+createTableSpace);
 		Statement statement = oracleDriverService.getStatement(vp.getOracleConnectionUrl(), vp.getUserName(),vp.getPassword());
 		if(null == statement){

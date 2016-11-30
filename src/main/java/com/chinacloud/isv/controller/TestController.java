@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.chinacloud.isv.component.EventDriver;
 import com.chinacloud.isv.persistance.TaskStackDao;
+import com.chinacloud.isv.util.MSUtil;
 
 
 
@@ -37,8 +38,8 @@ public class TestController {
 	@RequestMapping("/test_exception")
 	public void exceptionTest(){
 		logger.info("----------what hanppend------------");
-		queryEvent.go(null);
-		
+		//queryEvent.go(null);
+		System.out.println(MSUtil.dorpQutationMarks("\"asdfasdfasdf\""));
 	}
 
 }

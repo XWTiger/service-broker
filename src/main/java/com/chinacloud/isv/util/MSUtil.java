@@ -379,5 +379,17 @@ public class MSUtil {
 		tResult.setRequestUrl(valueProvider.getCallBackUrl());
 		return tResult;
 	}
+	/**
+	 * drop head and tail double quotation marks
+	 * @param content
+	 * @return
+	 */
+	static public String dorpQutationMarks(String content){
+		String value[] = content.split("\"");
+		return value[1];
+	}
 	
+	static public boolean tailHaveDirectedSymbol(String content ,String symbol){
+		return content.substring(content.length()-1, content.length()).equals(symbol);
+	}
 }

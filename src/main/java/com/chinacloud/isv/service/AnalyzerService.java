@@ -7,6 +7,7 @@ import com.chinacloud.isv.domain.TaskStack;
 import com.chinacloud.isv.entity.Params;
 import com.chinacloud.isv.entity.ValueProvider;
 import com.chinacloud.isv.util.CaseProvider;
+import com.chinacloud.isv.util.MSUtil;
 
 @Service
 public class AnalyzerService {
@@ -17,16 +18,53 @@ public class AnalyzerService {
 	 * @param params
 	 */
 	public void getOrclValueByEditonCode(String edtionCode,ValueProvider valueProvider){
-		valueProvider.setOracleConnectionUrl("jdbc:oracle:thin:@172.16.64.247:1521:orcl");
-		valueProvider.setCreateUserName("XTiger");
-		valueProvider.setCreateUserPassword("123456");
-		valueProvider.setTableSpaceLocation("/home/oracle/app/oradata/orcl");
-		valueProvider.setTableSpaceName("xtiger");
-		valueProvider.setTableSpaceSize(10);
-		valueProvider.setTableSpaceRiseNumber(5);
-		valueProvider.setTableSpaceMaxSize(200);
-		valueProvider.setUserName("system");
-		valueProvider.setPassword("system123");
+		System.out.println("Edition code =====>"+edtionCode);
+		String url[] = {"oracle_url"};
+		String port[] = {"oracle_port"};
+		String createUserName[] = {"db_tags_user"};
+		String createUserPassword[] = {"db_tags_password"};
+		String tableSpaceLocation[] = {"db_dbf"};
+		String tableSpaceSize[] = {"db_tags"};
+		String tableSpaceRiseNumber[] = {"db_increase_step"};
+		String tableSpaceName[] = {"db_tags_name"};
+		String tableSpaceMaxSize[] = {"db_tags_max"};
+		String userName[] = {"username"};
+		String password[] = {"password"};
+		
+		String oracleUrl = MSUtil.getDirectedValueFromJson(url, edtionCode).asText();
+		String orclPort = MSUtil.getDirectedValueFromJson(port, edtionCode).asText();
+		String cUserName = MSUtil.getDirectedValueFromJson(createUserName, edtionCode).asText();
+		String cUserPassword = MSUtil.getDirectedValueFromJson(createUserPassword, edtionCode).asText();
+		String tSpaceLocation = MSUtil.getDirectedValueFromJson(tableSpaceLocation, edtionCode).asText();
+		Integer tSpaceSize = MSUtil.getDirectedValueFromJson(tableSpaceSize, edtionCode).asInt();
+		Integer tSpaceRiseNumber = MSUtil.getDirectedValueFromJson(tableSpaceRiseNumber, edtionCode).asInt();
+		String tSpaceName = MSUtil.getDirectedValueFromJson(tableSpaceName, edtionCode).asText();
+		Integer tSpaceMaxSize = MSUtil.getDirectedValueFromJson(tableSpaceMaxSize, edtionCode).asInt();
+		String uName = MSUtil.getDirectedValueFromJson(userName, edtionCode).asText();
+		String uPassword = MSUtil.getDirectedValueFromJson(password, edtionCode).asText();
+		
+		if(null == tSpaceSize || "".equals(tSpaceSize)){
+			tSpaceSize = 100;
+		}
+		if(null == tSpaceRiseNumber || "".equals(tSpaceRiseNumber)){
+			tSpaceRiseNumber = 10;
+		}
+		if(null == tSpaceMaxSize || "".equals(tSpaceMaxSize)){
+			tSpaceMaxSize = 1000;
+		}
+		if(null == tSpaceName || "".equals(tSpaceName)){
+			tSpaceName = cUserName;
+		}
+		valueProvider.setOracleConnectionUrl("jdbc:oracle:thin:@"+oracleUrl+":"+orclPort+":orcl");
+		valueProvider.setCreateUserName(cUserName);
+		valueProvider.setCreateUserPassword(cUserPassword);
+		valueProvider.setTableSpaceLocation(tSpaceLocation);
+		valueProvider.setTableSpaceName(tSpaceName);
+		valueProvider.setTableSpaceSize(tSpaceSize);
+		valueProvider.setTableSpaceRiseNumber(tSpaceRiseNumber);
+		valueProvider.setTableSpaceMaxSize(tSpaceMaxSize);
+		valueProvider.setUserName(uName);
+		valueProvider.setPassword(uPassword);
 	}
 	/**
 	 * event id, instance id ,call back url,event type

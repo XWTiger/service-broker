@@ -23,6 +23,7 @@ import com.chinacloud.isv.service.AnalyzerService;
 import com.chinacloud.isv.service.CallbackWhiteholeService;
 import com.chinacloud.isv.util.CaseProvider;
 import com.chinacloud.isv.util.MSUtil;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class TaskConsumeSchedule {
@@ -68,7 +69,8 @@ public class TaskConsumeSchedule {
 					analyzerService.getEventInfoFromParams(params,taskStack, valueProvider);
 					switch (params.getData().getType()) {
 						case CaseProvider.EVENT_TYPE_SUBSCRIPTION_ORDER:{
-							String editionCode = params.getData().getPayload().getOrder().getEditionCode();
+							ObjectMapper om = new ObjectMapper();
+							String editionCode = om.writeValueAsString(params.getData().getPayload().getOrder().getEditionCode());
 							//analyze the edition code
 							valueProvider.setTaskId(taskStack.getId());
 							valueProvider.setInstanceId(taskStack.getId());

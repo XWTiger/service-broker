@@ -15,12 +15,13 @@ public class OracleDriverService {
 		
 
 		try {
+			logger.info("connectUrl =========================>"+connectUrl);
 			Class.forName("oracle.jdbc.driver.OracleDriver");
 			conn = DriverManager.getConnection(connectUrl,userName, password);
 			stmt = conn.createStatement();
 		} catch (Exception e) {
-			logger.error("connect oracle failed, error msg =====>"+e.getLocalizedMessage());
 			e.printStackTrace();
+			logger.error("connect oracle failed, error msg =====>"+e.getLocalizedMessage());
 			return null;
 		}
 		return stmt;

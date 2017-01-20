@@ -10,7 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.chinacloud.isv.entity.ValueProvider;
-import com.chinacloud.isv.util.MSUtil;
+import com.jcraft.jsch.JSchException;
 @Service
 public class CreateTableSpaceService {
 	private static final Logger logger = LogManager.getLogger(CreateTableSpaceService.class);
@@ -19,6 +19,8 @@ public class CreateTableSpaceService {
 	OracleDriverService oracleDriverService;
 	@Autowired
 	OracleUserService oracleUserService;
+	@Autowired
+	SSHService sshService;
 	
 	/**
 	 * 
@@ -29,14 +31,12 @@ public class CreateTableSpaceService {
 		 
 		//1. make a create table space sql
 		String createTableSpace = null;
-		if(MSUtil.tailHaveDirectedSymbol(vp.getTableSpaceLocation(), "/")){
-			createTableSpace = "create tablespace "+vp.getTableSpaceName()+" datafile '"+vp.getTableSpaceLocation()+vp.getTableSpaceName()+".dbf ' size "+vp.getTableSpaceSize()+"M autoextend on next "+vp.getTableSpaceRiseNumber()+"M maxsize "+vp.getTableSpaceMaxSize()+"M";
-		}
-		else{
-			createTableSpace = "create tablespace "+vp.getTableSpaceName()+" datafile '"+vp.getTableSpaceLocation()+"/"+vp.getTableSpaceName()+".dbf ' size "+vp.getTableSpaceSize()+"M autoextend on next "+vp.getTableSpaceRiseNumber()+"M maxsize "+vp.getTableSpaceMaxSize()+"M";
-		}
+		createTableSpace = "create tablespace "+vp.getTableSpaceName();
 		logger.debug("create table space SQL====>"+createTableSpace);
 		Statement statement = oracleDriverService.getStatement(vp.getOracleConnectionUrl(), vp.getUserName(),vp.getPassword());
+		logger.debug(vp.getOracleConnectionUrl());
+		logger.debug(vp.getUserName());
+		logger.debug(vp.getPassword());
 		if(null == statement){
 			return "connect oracle failed";
 		}
@@ -112,12 +112,26 @@ public class CreateTableSpaceService {
 			logger.error("drop table space  "+vp.getTableSpaceName()+" failed, error message:"+e.getLocalizedMessage());
 			return e.getLocalizedMessage();
 		}
+		
 		if(null != statement){
 			try {
 				statement.close();
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
+		}
+		//delte oracle database 
+		String deleteComand = "dbca -silent -deleteDatabase -sourceDB "+vp.getGdbname()+" -sysDBAUserName "+vp.getUserName()+" -sysDBAPassword "+vp.getPassword();
+		String shell_result = null;
+		try {
+			shell_result = sshService.execCmd(deleteComand,vp.getHostUser(),vp.getOracleHostPassword(),vp.getOracleHost());
+			logger.info("dbca 的执行结果shell_result:===========>>"+shell_result);
+		} catch (JSchException e) {
+			e.printStackTrace();
+			logger.error("ssh service error, error message: "+e.getLocalizedMessage());
+		}
+		if(null != shell_result){
+			return shell_result;
 		}
 		oracleDriverService.close();
 		return null;

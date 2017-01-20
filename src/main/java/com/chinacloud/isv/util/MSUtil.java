@@ -392,4 +392,21 @@ public class MSUtil {
 	static public boolean tailHaveDirectedSymbol(String content ,String symbol){
 		return content.substring(content.length()-1, content.length()).equals(symbol);
 	}
+	
+	static public String getDBCAComand(ValueProvider valueProvider){
+		String dbcaComand = "dbca -silent -createDatabase -templateName "+valueProvider.getTemplateName()+
+						" -gdbname "+valueProvider.getGdbname()+" -sid  "+valueProvider.getSid()+" -responseFile "+valueProvider.getResponseFile()+         
+						" -RACOneNode -RACOneNodeServiceName "+valueProvider.getrACOneNodeServiceName()+                       
+						" -characterSet "+valueProvider.getCharacterSet()+" -policyManaged -serverPoolName "+valueProvider.getServerPoolName()+
+						" -sysPassword "+valueProvider.getSysPassword()+"     -systemPassword "+valueProvider.getSysmanPassword()+           
+						" -emConfiguration "+valueProvider.getEmConfiguration()+" -dbsnmpPassword "+valueProvider.getDbsnmpPassword()+          
+						" -sysmanPassword "+valueProvider.getSysmanPassword()+"  -storageType "+valueProvider.getStorageType()+                    
+						" -asmsnmpPassword "+valueProvider.getAsmsnmpPassword()+" -diskGroupName "+valueProvider.getDiskGroupName()+              
+						" -sampleSchema "+valueProvider.getSampleSchema()+                                            
+						" -redoLogFileSize "+valueProvider.getRedoLogFileSize()+                                           
+						" -automaticMemoryManagement "+valueProvider.getAutomaticMemoryManagement()+                               
+						" -initParams "+valueProvider.getInitParams()+" -totalMemory "+valueProvider.getTotalMemory()+                 
+						" -databaseType "+valueProvider.getDatabaseType();
+		return dbcaComand;
+	} 
 }

@@ -13,8 +13,10 @@ import com.chinacloud.isv.persistance.TaskResultDao;
 import com.chinacloud.isv.persistance.TaskStackDao;
 import com.chinacloud.isv.service.CallbackWhiteholeService;
 import com.chinacloud.isv.service.CreateTableSpaceService;
+import com.chinacloud.isv.service.SSHService;
 import com.chinacloud.isv.util.CaseProvider;
 import com.chinacloud.isv.util.MSUtil;
+import com.jcraft.jsch.JSchException;
 @Component
 @Transactional
 public class OrderEvent {
@@ -27,6 +29,8 @@ public class OrderEvent {
 	TaskResultDao taskResultDao;
 	@Autowired
 	TaskStackDao taskStackDao;
+	@Autowired
+	SSHService sshService;
 
 	
 	public void close() {
@@ -35,16 +39,36 @@ public class OrderEvent {
 
 
 	public String  go(ValueProvider valueProvider) {
-		String result = createTableSpaceService.createTableSpace(valueProvider);
+		//create a oracle database
+		String command = MSUtil.getDBCAComand(valueProvider);
+		logger.debug("the command ====> "+command);
+		
+		String shell_result = null;
 		String whiteholeMsg = null;
-		//1. return success message to withhole
-		if(null == result){
-			valueProvider.setEventDealResult(CaseProvider.SUCESS_STATUS);
-			whiteholeMsg = WhiteholeFactory.getWhiteholeMessage(valueProvider);
-		}else{
-		//2. return failed message to withhole	
+		try {
+			shell_result = sshService.execCmd(command,valueProvider.getHostUser(),valueProvider.getOracleHostPassword(),valueProvider.getOracleHost());
+			logger.info("dbca 的执行结果shell_result:===========>>"+shell_result);
+		} catch (JSchException e) {
+			e.printStackTrace();
+			logger.error("ssh service error, error message: "+e.getLocalizedMessage());
+		}
+		String result = null;
+		if(null != shell_result){
 			valueProvider.setEventDealResult(CaseProvider.FAILED_STATUS);
-			whiteholeMsg = WhiteholeFactory.getFailedMsg(valueProvider, "处理失败，错误信息： "+result);
+			whiteholeMsg = WhiteholeFactory.getFailedMsg(valueProvider, "处理失败，错误信息： "+shell_result);
+		}else{
+			logger.info("已经进入 createTableSpace:==========>>");
+			result = createTableSpaceService.createTableSpace(valueProvider);
+			logger.info("创建表空间的执行结果 createTableSpace:==========>>"+result);
+			//1. return success message to withhole
+			if(null == result){
+				valueProvider.setEventDealResult(CaseProvider.SUCESS_STATUS);
+				whiteholeMsg = WhiteholeFactory.getWhiteholeMessage(valueProvider);
+			}else{
+			//2. return failed message to withhole	
+				valueProvider.setEventDealResult(CaseProvider.FAILED_STATUS);
+				whiteholeMsg = WhiteholeFactory.getFailedMsg(valueProvider, "处理失败，错误信息： "+result);
+			}
 		}
 		valueProvider.setToWhiteholeMessage(whiteholeMsg);
 		String wResult = callbackWhiteholeService.returnMsgToWhitehole(whiteholeMsg, valueProvider);

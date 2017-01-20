@@ -40,7 +40,7 @@ public class TaskResultShedule {
 
 	@Scheduled(fixedRate = 50000)
 	private void manageTaskResult() {
-		logger.debug("this is  locked task scan");
+		
 		int number = taskResultDao.getCount();
 		if (number > taskResultNumber) {
 			logger.info("real number --->" + number);
